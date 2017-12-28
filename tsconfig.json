@@ -19,7 +19,7 @@
         /* Raise error on expressions and declarations with an implied 'any' type. */
         "noImplicitAny": true,
         /* Enable strict null checks. */
-        "strictNullChecks": true,
+        "strictNullChecks": false,
         "preserveConstEnums": true,
         /* Experimental Options */
         /* Enables experimental support for ES7 decorators. */
