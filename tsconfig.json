@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'. */
+        "target": "es6",
+        /* Specify module code generation: 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
+        "module": "commonjs",
+        /* Generates corresponding '.map' file. */
+        "sourceMap": true,
+        /* Redirect output structure to the directory. */
+        "outDir": "dist",
+        "baseUrl": ".",
+        "typeRoots": [
+            "typings"
+        ],
+        /* Do not emit comments to output. */
+        "removeComments": true,
+        /* Enable all strict type-checking options. */
+        "strict": true,
+        /* Raise error on expressions and declarations with an implied 'any' type. */
+        "noImplicitAny": true,
+        /* Enable strict null checks. */
+        "strictNullChecks": true,
+        "preserveConstEnums": true,
+        /* Experimental Options */
+        /* Enables experimental support for ES7 decorators. */
+        "experimentalDecorators": true,
+        /* Enables experimental support for emitting type metadata for decorators. */
+        "emitDecoratorMetadata": true
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
