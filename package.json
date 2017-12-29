@@ -1,27 +1,23 @@
 {
     "name": "conductor",
     "version": "1.0.0",
-    "description": "Websocket service that manages tcp connections using redis and incoming notifications via rabbitmq",
+    "description":
+        "Websocket service that manages tcp connections using redis and incoming notifications via rabbitmq",
     "main": "index.js",
     "scripts": {
         "start": "npm run build && npm run watch",
-        "start:prod": "npm run build && node --harmony --use-strict dist/app.js",
+        "start:prod": "npm run build && node --harmony --use-strict dist/server.js",
         "build": "npm run build-ts && npm run tslint",
         "clean": "rm -rf dist && rm -rf node_modules",
-        "serve": "nodemon dist/app.js",
-        "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold, green.bold\" \"npm run watch-ts\" \"npm run serve\"",
+        "serve": "nodemon dist/server.js",
+        "watch":
+            "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold, green.bold\" \"npm run watch-ts\" \"npm run serve\"",
         "build-ts": "tsc",
         "watch-ts": "tsc -w",
         "tslint": "tslint -c tslint.json -p tsconfig.json",
         "test": "jest --forceExit"
     },
-    "keywords": [
-        "websocket",
-        "realtime",
-        "http",
-        "express",
-        "node"
-    ],
+    "keywords": ["websocket", "realtime", "http", "express", "node"],
     "author": "Sri Majji",
     "license": "ISC",
     "dependencies": {
@@ -37,7 +33,8 @@
         "morgan": "^1.9.0",
         "redis": "^2.8.0",
         "typescript": "^2.6.2",
-        "winston": "^2.4.0"
+        "winston": "^2.4.0",
+        "ws": "^3.3.3"
     },
     "devDependencies": {
         "@types/body-parser": "^1.16.8",
@@ -53,6 +50,7 @@
         "@types/node": "^8.5.2",
         "@types/redis": "^2.8.3",
         "@types/winston": "^2.3.7",
+        "@types/ws": "^3.2.1",
         "concurrently": "^3.5.1",
         "nodemon": "^1.14.3",
         "tslint": "^5.8.0"
