@@ -2,7 +2,7 @@ import * as websocket from "ws";
 import * as http from "http";
 
 import { getToken } from "../utils/helpers";
-import { logger } from "../../src/utils/logger";
+import { logger } from "../utils/logger";
 import * as url from "url";
 
 let _wss: any;

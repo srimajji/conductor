@@ -25,40 +25,46 @@ const options = {
     ssl: { enabled: false },
 };
 
-const connection = amqp.createConnection(options);
+const promise = new Promise((resolve: any, reject: any) => {
+    const connection = amqp.createConnection(options);
 
-connection.on("error", err => {
-    logger.error("Error from rabbitmq: ", err);
-});
+    connection.on("error", err => {
+        reject(err);
+    });
 
-let _exchange: any;
-let _queue: any;
+    let _exchange: any;
+    let _queue: any;
 
-connection.on("ready", () => {
-    logger.info("Amqp connection success");
+    connection.on("ready", () => {
+        logger.info("Amqp connection success");
 
-    connection.exchange(NOTIFICATION_EXCHANGE, { passive: true }, (exchange: any) => {
-        _exchange = exchange;
+        connection.exchange(NOTIFICATION_EXCHANGE, { passive: true }, (exchange: any) => {
+            _exchange = exchange;
+            logger.info("Amqp exchange success");
 
-        logger.info("Amqp exchange success");
+            // Since we are creating a new queue, let's delete it when node shutdowns
+            connection.queue(NOTIFICATION_QUEUE, { exclusive: true }, (queue: any) => {
+                _queue = queue;
+                logger.info("Amqp queue success");
 
-        // Since we are creating a new queue, let's delete it when node shutdowns
-        connection.queue(NOTIFICATION_QUEUE, { exclusive: true }, (queue: any) => {
-            _queue = queue;
-            logger.info("Amqp queue success");
+                queue.bind(NOTIFICATION_EXCHANGE, ROUTING_KEY);
+                queue.subscribe(
+                    { ack: true },
+                    (
+                        message: MessageEvent,
+                        headers: any,
+                        deliveryInfo: any,
+                        messageObject: any
+                    ) => {
+                        const jsonPayload = JSON.parse(message.data.toString("utf-8"));
 
-            queue.bind(NOTIFICATION_EXCHANGE, ROUTING_KEY);
-            queue.subscribe(
-                { ack: true },
-                (message: MessageEvent, headers: any, deliveryInfo: any, messageObject: any) => {
-                    const jsonPayload = JSON.parse(message.data.toString("utf-8"));
-
-                    // acknowledge message received
-                    queue.shift(false, false);
-                }
-            );
+                        // acknowledge message received
+                        queue.shift(false, false);
+                    }
+                );
+            });
         });
     });
 });
 
-export default connection;
+export { promise as connectRabbitMq };
