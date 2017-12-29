@@ -1,15 +1,17 @@
-# Node websocket authentication with passport
+# Expirement: Node websocket service
 
-Expiremantal project to test authentication using jwt token via websockets
+Expiremantal project to test websocket authentication and consumption of messages via rabbitmq 
 
 ## Libraries
 
 * Express
 * WS
-* Passport
+* Rabbitmq
 * Typescript
+* JWT Tokens
 
 ## Running the app
 
 1. Clone the repository
-2. `npm start`
+2. `yarn`
+3. `yarn run start:prod`
