@@ -22,7 +22,7 @@ export function mainRoute(req: any, res: any) {
         } else if (req.session) {
             req.session.user = jwtPayload;
         }
-        res.status(200).json({ title: "Websocket middleware", res: req.session });
+        res.status(200).json({ title: "Websocket middleware", token: jwtPayload });
     } catch (err) {
         logger.error("Error verifying jwt: ", err);
         return res.status(400).json({ error: err });

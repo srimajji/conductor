@@ -2,7 +2,7 @@ import * as http from "http";
 import * as url from "url";
 import * as websocket from "ws";
 
-import { app, sessionStore } from "./app";
+import { app } from "./app";
 import { logger } from "./utils/logger";
 import { getToken } from "./utils/helpers";
 
@@ -40,6 +40,7 @@ wss.on("connection", (ws: any, req: any) => {
 });
 
 server.listen(app.get("port"), () => {
+    require("./rabbitmq/rabbitmq");
     logger.info(`App is running at http://localhost:${server.address().port}`);
     logger.info("Press CTRL-C to stop");
 });
