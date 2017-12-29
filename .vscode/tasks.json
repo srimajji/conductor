@@ -13,6 +13,13 @@
                 "run",
                 "build"
             ]
+        },
+        {
+            "taskName": "start",
+            "args": [
+                "run",
+                "start"
+            ]
         }
     ]
 }

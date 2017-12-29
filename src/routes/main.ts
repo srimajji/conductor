@@ -14,8 +14,6 @@ export function mainRoute(req: any, res: any) {
         return res.status(400).json({ error: "No token provided" });
     }
     try {
-        const jwtKey = process.env.JWT_KEY || "";
-        const jwtIss = process.env.JWT_ISS || "";
         const jwtPayload = jwt.decode(token) as JsonWebToken;
         if (!jwtPayload.iss) {
             throw new Error("No issuer specified");
