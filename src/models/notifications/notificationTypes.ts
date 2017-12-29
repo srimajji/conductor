@@ -4,6 +4,7 @@ export enum NotificationTypes {
     QUESTION_ESCALATE_BY_POSTER = "net.insidr.question.EscalatedQuestionByCustomerNotification",
     QUESTION_ESCALATE_BY_EXPERT = "net.insidr.routing.EmailQuestionToExpertNotification.EscalatedQuestionByExpertNotification",
     QUESTION_FLAG = "net.insidr.question.QuestionFlagNotification",
+    QUESTION_CLOSE = "net.insidr.question.ClosedQuestionNotification",
 
     // response notifications
     RESPONSE_BY_EXPERT = "net.insidr.response.FirstResponseNotification",

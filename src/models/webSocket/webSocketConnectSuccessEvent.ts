@@ -1,4 +1,4 @@
-export interface WebSocketConnectSuccess {
+export interface WebSocketConnectSuccessEvent {
     connection: WebSocket;
     userId: string;
 }
