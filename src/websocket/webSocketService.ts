@@ -43,7 +43,7 @@ namespace WebSocketService {
     }
 
     function checkForBrokenConnection() {
-        return setInterval(function ping() {
+        setInterval(function ping() {
             _wss.clients.forEach(function each(ws: any) {
                 if (ws.isAlive === false) return ws.terminate();
 
@@ -62,9 +62,11 @@ namespace WebSocketService {
     }
 
     export function sendNotificationToUser(userId: string, payload: JSON) {
-        const ws: any = get(_webSocketConnectionMap, userId);
-        if (ws) {
-            ws.send(JSON.stringify(payload));
+        const userConnections: any = get(_webSocketConnectionMap, userId);
+        if (userConnections.length) {
+            userConnections.map((userConnection: any, key: any) => {
+                userConnection.send(JSON.stringify(payload));
+            });
         }
     }
 
@@ -90,17 +92,23 @@ namespace WebSocketService {
             const location = url.parse(req.url, true);
             const ip = req.connection.remoteAddress;
 
-            set(_webSocketConnectionMap, req.user.uuid, ws);
+            const userConections = get(_webSocketConnectionMap, req.user.uuid);
+            if (userConections && userConections.length) {
+                set(_webSocketConnectionMap, req.user.uuid, userConections.concat(ws));
+            } else {
+                set(_webSocketConnectionMap, req.user.uuid, [ws]);
+            }
             ws.send(JSON.stringify({ status: 200, message: "SUCCESS!" }));
             logger.info("User connection success", { userId: req.user.uuid, headers: req.headers });
 
             // keep connection alive
             ws.isAlive = true;
-            ws.on("pong", () => {
+            ws.pong("", false, true);
+            ws.on("ping", () => {
                 // @ts-ignore
                 this.isAlive = true;
             });
-            checkForBrokenConnection();
+            // checkForBrokenConnection();
 
             /* We can ignore client messages for now
 

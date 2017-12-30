@@ -37,7 +37,11 @@ namespace NotificationEventService {
     });
 
     export function notify(event: string, payload: JSON) {
-        eventEmitter.emit(event, payload);
+        try {
+            eventEmitter.emit(event, payload);
+        } catch (err) {
+            logger.error(err);
+        }
     }
 
     export function subscribe(event: string, listener: (payload: any) => void) {
