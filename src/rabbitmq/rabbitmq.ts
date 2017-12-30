@@ -1,7 +1,8 @@
 import * as amqp from "amqp";
 import { logger } from "../utils/logger";
 import { AMQPExchange, AMQPQueue } from "amqp";
-
+import NotificationEventService from "../notification/notificationEventService";
+import { InsidrNotificationTypes } from "../models/notifications/notificationTypes";
 // Rabbitmq connection settings
 const RABBITMQ_HOST: string = process.env.RABBITMQ_HOST || "localhost";
 const RABBITMQ_PORT: number = Number.parseInt(process.env.RABBITMQ_PORT) || 5672;
@@ -29,7 +30,11 @@ const promise = new Promise((resolve: any, reject: any) => {
     const connection = amqp.createConnection(options);
 
     connection.on("error", err => {
-        reject(err);
+        if (err.message.indexOf("authentication") > -1) {
+            reject(err);
+        } else {
+            logger.error("Rabbitmq message\n", err);
+        }
     });
 
     let _exchange: any;
@@ -46,6 +51,7 @@ const promise = new Promise((resolve: any, reject: any) => {
             connection.queue(NOTIFICATION_QUEUE, { exclusive: true }, (queue: any) => {
                 _queue = queue;
                 logger.info("Amqp queue success");
+                resolve();
 
                 queue.bind(NOTIFICATION_EXCHANGE, ROUTING_KEY);
                 queue.subscribe(
@@ -57,6 +63,15 @@ const promise = new Promise((resolve: any, reject: any) => {
                         messageObject: any
                     ) => {
                         const jsonPayload = JSON.parse(message.data.toString("utf-8"));
+                        logger.info(jsonPayload);
+
+                        if (jsonPayload && jsonPayload.notification) {
+                            const notificationClass = jsonPayload.notification.class;
+                            NotificationEventService.notify(
+                                notificationClass,
+                                jsonPayload.notification
+                            );
+                        }
 
                         // acknowledge message received
                         queue.shift(false, false);

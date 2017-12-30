@@ -1,4 +1,4 @@
-export enum NotificationTypes {
+export enum InsidrNotificationTypes {
     // question notifications
     NEW_QUESTION = "net.insidr.routing.EmailQuestionToExpertNotification",
     QUESTION_ESCALATE_BY_POSTER = "net.insidr.question.EscalatedQuestionByCustomerNotification",
@@ -19,4 +19,13 @@ export enum NotificationTypes {
     RESPONSE_RATE_POSITIVE = "net.insidr.response.PositiveHappinessResponseNotification",
     RESPONSE_RATE_NEGATIVE = "net.insidr.response.NegativeHappinessResponseNotification",
     RESPONSE_TETIMONIAL = "net.insidr.testimonial.NewTestimonialNotification",
+}
+
+export enum WebSocketNotificationTypes {
+    CONNECTION_NEW = "CONNECTION_NEW",
+    CONNECTION_CLOSED = "CONNECTION_CLOSE",
+    CONNECTION_DROPPED = "CONNECTION_DROPPED",
+
+    SEND_MESSAGE_TO_EXPERT = "SEND_MESSAGE_EXPERT",
+    SEND_MESSAGE_TO_POSTER = "SEND_MESSAGE_TO_POSTER",
 }

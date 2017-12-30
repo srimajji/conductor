@@ -5,12 +5,12 @@ import * as websocket from "ws";
 import { app } from "./app";
 import { logger } from "./utils/logger";
 import { getToken } from "./utils/helpers";
-import { createWebSocketServer } from "./websocket/webSocketManager";
+import WebSocketService from "./websocket/webSocketService";
 import { connectRabbitMq } from "./rabbitmq/rabbitmq";
 
 const server = http.createServer(app);
 
-createWebSocketServer(server);
+WebSocketService.createWebSocketServer(server);
 
 connectRabbitMq.catch((err: any) => {
     logger.error("Check rabbitmq connection settings\n", err);
@@ -23,6 +23,7 @@ connectRabbitMq.catch((err: any) => {
 
 function gracefullyShutdown() {
     server.close(() => {
+        WebSocketService.closeWebSocketServer();
         logger.info("Server shutting down");
         process.exit();
     });
