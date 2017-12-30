@@ -51,7 +51,7 @@ namespace WebSocketService {
         }, 30000);
     }
 
-    function broadcast(data: string) {
+    export function broadcast(data: string) {
         _wss.clients.forEach(function each(client: any) {
             if (client.readyState === websocket.OPEN) {
                 client.send(data);
