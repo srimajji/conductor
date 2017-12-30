@@ -19,6 +19,9 @@ export enum InsidrNotificationTypes {
     RESPONSE_RATE_POSITIVE = "net.insidr.response.PositiveHappinessResponseNotification",
     RESPONSE_RATE_NEGATIVE = "net.insidr.response.NegativeHappinessResponseNotification",
     RESPONSE_TETIMONIAL = "net.insidr.testimonial.NewTestimonialNotification",
+
+    // company
+    COMPANY_BLOCKING_TASK = "net.insidr.question.NewCompanyBlockingTaskNotificatio",
 }
 
 export enum WebSocketNotificationTypes {

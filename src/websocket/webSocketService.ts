@@ -2,6 +2,7 @@ import * as websocket from "ws";
 import * as http from "http";
 import * as url from "url";
 import * as jwt from "jsonwebtoken";
+import { get } from "lodash";
 
 import { getToken } from "../utils/helpers";
 import { logger } from "../utils/logger";
@@ -58,6 +59,13 @@ namespace WebSocketService {
         });
     }
 
+    export function sendNotificationToUser(userId: string, payload: JSON) {
+        const ws = get(_wss, userId);
+        if (ws) {
+            ws.send(payload);
+        }
+    }
+
     export function closeWebSocketServer(): void {
         if (_wss) {
             logger.info("Terminating all socket connections!");
@@ -90,12 +98,15 @@ namespace WebSocketService {
             });
             checkForBrokenConnection();
 
+            /* We can ignore client messages for now
+
             ws.on("message", (message: string) => {
                 logger.info("received: ", message);
                 broadcast(message);
             });
-
             ws.send("something");
+
+            */
         });
     }
 }

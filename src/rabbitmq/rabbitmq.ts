@@ -63,14 +63,10 @@ const promise = new Promise((resolve: any, reject: any) => {
                         messageObject: any
                     ) => {
                         const jsonPayload = JSON.parse(message.data.toString("utf-8"));
-                        logger.info(jsonPayload);
-
                         if (jsonPayload && jsonPayload.notification) {
                             const notificationClass = jsonPayload.notification.class;
-                            NotificationEventService.notify(
-                                notificationClass,
-                                jsonPayload.notification
-                            );
+                            logger.info("Publish notification", notificationClass);
+                            NotificationEventService.notify(notificationClass, jsonPayload);
                         }
 
                         // acknowledge message received
