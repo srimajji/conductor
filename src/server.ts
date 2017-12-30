@@ -6,7 +6,7 @@ import { app } from "./app";
 import { logger } from "./utils/logger";
 import { getToken } from "./utils/helpers";
 import WebSocketService from "./websocket/webSocketService";
-import { connectRabbitMq } from "./rabbitmq/rabbitmq";
+import { connectRabbitMq, disconnectRabbitMq } from "./rabbitmq/rabbitmq";
 
 const server = http.createServer(app);
 
@@ -24,6 +24,7 @@ connectRabbitMq.catch((err: any) => {
 function gracefullyShutdown() {
     server.close(() => {
         WebSocketService.closeWebSocketServer();
+        disconnectRabbitMq();
         logger.info("Server shutting down");
         process.exit();
     });

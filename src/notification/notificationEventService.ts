@@ -21,9 +21,14 @@ namespace NotificationEventService {
             if (user && user.uuid) {
                 if (
                     InsidrNotificationTypes[notificationType] ==
-                    InsidrNotificationTypes.COMPANY_BLOCKING_TASK
+                    "net.insidr.question.NewCompanyBlockingTaskNotification"
                 ) {
                     WebSocketService.broadcast(payload);
+                } else if (
+                    InsidrNotificationTypes[notificationType] ==
+                    "net.insidr.routing.EmailQuestionToExpertNotification"
+                ) {
+                    WebSocketService.sendNotificationToUser(payload.insider.uuid, payload);
                 } else {
                     WebSocketService.sendNotificationToUser(user.uuid, payload);
                 }

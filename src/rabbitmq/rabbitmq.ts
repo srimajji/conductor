@@ -26,10 +26,12 @@ const options = {
     ssl: { enabled: false },
 };
 
-const promise = new Promise((resolve: any, reject: any) => {
-    const connection = amqp.createConnection(options);
+let _connection: any;
 
-    connection.on("error", err => {
+const promise = new Promise((resolve: any, reject: any) => {
+    _connection = amqp.createConnection(options);
+
+    _connection.on("error", (err: any) => {
         if (err.message.indexOf("authentication") > -1) {
             reject(err);
         } else {
@@ -40,15 +42,15 @@ const promise = new Promise((resolve: any, reject: any) => {
     let _exchange: any;
     let _queue: any;
 
-    connection.on("ready", () => {
+    _connection.on("ready", () => {
         logger.info("Amqp connection success");
 
-        connection.exchange(NOTIFICATION_EXCHANGE, { passive: true }, (exchange: any) => {
+        _connection.exchange(NOTIFICATION_EXCHANGE, { passive: true }, (exchange: any) => {
             _exchange = exchange;
             logger.info("Amqp exchange success");
 
             // Since we are creating a new queue, let's delete it when node shutdowns
-            connection.queue(NOTIFICATION_QUEUE, { exclusive: true }, (queue: any) => {
+            _connection.queue(NOTIFICATION_QUEUE, { exclusive: true }, (queue: any) => {
                 _queue = queue;
                 logger.info("Amqp queue success");
                 resolve();
@@ -78,4 +80,9 @@ const promise = new Promise((resolve: any, reject: any) => {
     });
 });
 
-export { promise as connectRabbitMq };
+function disconnectRabbitMq() {
+    logger.info("Disconnecting from rabbitmq");
+    _connection && _connection.disconnect();
+}
+
+export { promise as connectRabbitMq, disconnectRabbitMq };

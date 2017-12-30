@@ -21,7 +21,7 @@ export enum InsidrNotificationTypes {
     RESPONSE_TETIMONIAL = "net.insidr.testimonial.NewTestimonialNotification",
 
     // company
-    COMPANY_BLOCKING_TASK = "net.insidr.question.NewCompanyBlockingTaskNotificatio",
+    COMPANY_BLOCKING_TASK = "net.insidr.question.NewCompanyBlockingTaskNotification",
 }
 
 export enum WebSocketNotificationTypes {

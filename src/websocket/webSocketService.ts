@@ -2,7 +2,7 @@ import * as websocket from "ws";
 import * as http from "http";
 import * as url from "url";
 import * as jwt from "jsonwebtoken";
-import { get } from "lodash";
+import { get, set } from "lodash";
 
 import { getToken } from "../utils/helpers";
 import { logger } from "../utils/logger";
@@ -12,7 +12,7 @@ import WebSocketConnectionMap from "../models/webSocket/WebSocketConnectionMap";
 namespace WebSocketService {
     let _wss: any;
     // tslint:disable-next-line:prefer-const
-    let _webSocketConnectionMap: WebSocketConnectionMap;
+    let _webSocketConnectionMap: WebSocketConnectionMap = {};
 
     interface JsonWebToken {
         iss: String;
@@ -20,7 +20,9 @@ namespace WebSocketService {
     }
 
     function verifyClient(info: any, callback: Function) {
-        const token = getToken(info.req.headers["Authorization"]);
+        const token =
+            getToken(get(info.req.headers, "Authorization")) ||
+            get(info.req.headers, "sec-websocket-protocol");
         if (!token) {
             logger.error("Error authorizating ws connection", info.req.headers);
             callback(false, 401, "Unauthorizated access");
@@ -54,15 +56,15 @@ namespace WebSocketService {
     export function broadcast(data: string) {
         _wss.clients.forEach(function each(client: any) {
             if (client.readyState === websocket.OPEN) {
-                client.send(data);
+                client.send(JSON.stringify(data));
             }
         });
     }
 
     export function sendNotificationToUser(userId: string, payload: JSON) {
-        const ws = get(_wss, userId);
+        const ws: any = get(_webSocketConnectionMap, userId);
         if (ws) {
-            ws.send(payload);
+            ws.send(JSON.stringify(payload));
         }
     }
 
@@ -79,6 +81,7 @@ namespace WebSocketService {
         }
 
         _wss = new websocket.Server({
+            port: 3030,
             server,
             verifyClient: verifyClient,
         });
@@ -87,7 +90,8 @@ namespace WebSocketService {
             const location = url.parse(req.url, true);
             const ip = req.connection.remoteAddress;
 
-            _webSocketConnectionMap[req.user.uuid].push(ws);
+            set(_webSocketConnectionMap, req.user.uuid, ws);
+            ws.send(JSON.stringify({ status: 200, message: "SUCCESS!" }));
             logger.info("User connection success", { userId: req.user.uuid, headers: req.headers });
 
             // keep connection alive
