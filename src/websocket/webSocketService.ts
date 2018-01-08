@@ -4,7 +4,7 @@ import * as url from "url";
 import * as jwt from "jsonwebtoken";
 import { get, set } from "lodash";
 
-import { getToken } from "../utils/helpers";
+import { getToken, verifyToken } from "../utils/helpers";
 import { logger } from "../utils/logger";
 import NotificationEventService from "../notification/notificationEventService";
 import WebSocketConnectionMap from "../models/webSocket/WebSocketConnectionMap";
@@ -19,17 +19,17 @@ namespace WebSocketService {
         roles: String[];
     }
 
-    function verifyClient(info: any, callback: Function) {
-        const token =
-            getToken(get(info.req.headers, "Authorization")) ||
-            get(info.req.headers, "sec-websocket-protocol");
+    async function verifyClient(info: any, callback: Function) {
+        const token = getToken(get(info.req.headers, "Authorization")) || info.req.url.slice(8);
         if (!token) {
             logger.error("Error authorizating ws connection", info.req.headers);
             callback(false, 401, "Unauthorizated access");
         } else {
             try {
-                const jwtPayload = jwt.decode(token) as JsonWebToken;
-                if (!jwtPayload.iss) {
+                const jwtPayload = await verifyToken(token).catch(err => {
+                    callback(false);
+                });
+                if (!jwtPayload.uuid) {
                     callback(false);
                 } else {
                     info.req.user = jwtPayload;
@@ -63,9 +63,11 @@ namespace WebSocketService {
 
     export function sendNotificationToUser(userId: string, payload: JSON) {
         const userConnections: any = get(_webSocketConnectionMap, userId);
-        if (userConnections.length) {
+        if (userConnections && userConnections.length) {
             userConnections.map((userConnection: any, key: any) => {
-                userConnection.send(JSON.stringify(payload));
+                if (userConnection.readyState === websocket.OPEN) {
+                    userConnection.send(JSON.stringify(payload));
+                }
             });
         }
     }
@@ -89,8 +91,8 @@ namespace WebSocketService {
         });
 
         _wss.on("connection", (ws: any, req: any) => {
-            const location = url.parse(req.url, true);
-            const ip = req.connection.remoteAddress;
+            // const location = url.parse(req.url, true);
+            // const ip = req.connection.remoteAddress;
 
             const userConections = get(_webSocketConnectionMap, req.user.uuid);
             if (userConections && userConections.length) {

@@ -9,6 +9,7 @@ import { logger } from "../utils/logger";
 import WebSocketService from "../websocket/webSocketService";
 
 declare interface NotificationEventService {
+    notfify(event: string, payload: JSON): this;
     subscribe(event: string, listener: Function): this;
 }
 
@@ -29,7 +30,12 @@ namespace NotificationEventService {
                     "net.insidr.routing.EmailQuestionToExpertNotification"
                 ) {
                     WebSocketService.sendNotificationToUser(payload.insider.uuid, payload);
-                } else {
+                } else if (
+                    InsidrNotificationTypes[notificationType] ==
+                    "net.insidr.response.NewApprovedResponseMessageNotification"
+                )
+                    WebSocketService.sendNotificationToUser(payload.insider.uuid, payload);
+                else {
                     WebSocketService.sendNotificationToUser(user.uuid, payload);
                 }
             }

@@ -1,6 +1,5 @@
 import * as http from "http";
 import * as url from "url";
-import * as websocket from "ws";
 
 import { app } from "./app";
 import { logger } from "./utils/logger";
